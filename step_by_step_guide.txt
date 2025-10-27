@@ -1,0 +1,21 @@
+check if python is installed 
+python --version
+
+check if conda or anaconda is installed 
+conda --version
+
+create a virtual env using
+python -m venv venv
+
+activate venv using 
+.\venv\Scripts\Activate
+
+change the current interpreter in vscode
+press -> ctrl + shift + p -> select interpreter find path of venv in project folder .\venv\Scripts\Activate
+
+create setup.py & requirement.txt in root directory 
+
+use this command to install and dependencies only in your virtual env
+pip install -r requirements.txt
+
+then create notebooks and complete EDA and Model training
