@@ -19,3 +19,22 @@ use this command to install and dependencies only in your virtual env
 pip install -r requirements.txt
 
 then create notebooks and complete EDA and Model training
+
+create src folder including -> components and Pipeline directories 
+
+add two script for logging and custom exception for handling error efficiently
+
+now move to the data ingestion part 
+we are using dataclass for easy class variables declaration and load the data from Notebbok/data/heart.read_csv
+save it in our artifacts 
+
+use train test split to split the data into training data and testing data and save these files under artifacts for future model training Pipeline
+
+testing tip 
+add the src module in modules path by using
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+before importing any custom module
+
+
