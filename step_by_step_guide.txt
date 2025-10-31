@@ -13,6 +13,10 @@ activate venv using
 change the current interpreter in vscode
 press -> ctrl + shift + p -> select interpreter find path of venv in project folder .\venv\Scripts\Activate
 
+=========================================================================================================================================
+SETTING UP SETUP.PY , REQUIREMENTS & 
+=========================================================================================================================================
+
 create setup.py & requirement.txt in root directory 
 
 use this command to install and dependencies only in your virtual env
@@ -23,6 +27,10 @@ then create notebooks and complete EDA and Model training
 create src folder including -> components and Pipeline directories 
 
 add two script for logging and custom exception for handling error efficiently
+
+=========================================================================================================================================
+DATA INGESTION PART
+=========================================================================================================================================
 
 now move to the data ingestion part 
 we are using dataclass for easy class variables declaration and load the data from Notebbok/data/heart.read_csv
@@ -37,4 +45,26 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 before importing any custom module
 
+=========================================================================================================================================
+DATA TRANSFORMATION PART
+=========================================================================================================================================
 
+In data transformation we first create a class with preprocessor path
+then we separate all the numerical and categorical columns 
+then create a pipeline to transform all the data into numbers using multiple encoding techniques
+
+create a one more class function which is responsible for creating a preprocessor object which we will use for prediction
+
+
+=========================================================================================================================================
+MODEL TRAINER PART
+=========================================================================================================================================
+
+model trainer initializer first separate the test and training data 
+then we will apply all the model and parameter using eval_model utility function which return us the best model for the current data set
+then we just show our accuracy score
+
+=========================================================================================================================================
+BUILDING SERVER USING FLASK PART
+=========================================================================================================================================
+now we build a server using flask api and take the dat from user encode it and create data frame using prediction pipeline then we can predict heart disease

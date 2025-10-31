@@ -19,12 +19,3 @@ class Custom_Exception(Exception):
         
     def __str__(self):
         return self.error_message
-
-from logger_config import logger
-
-if __name__ == "__main__":
-    try:
-        a = 1/0
-    except Exception as e:
-        logger.info("Divided by zero")
-        raise Custom_Exception(e, sys)

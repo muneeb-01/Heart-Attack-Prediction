@@ -9,8 +9,8 @@ from dataclasses import dataclass
 
 from src.logger_config import logger
 from src.exception import Custom_Exception
-
-
+from src.components.data_transformation import DataTransformation
+from src.components.model_trainer import ModelTrainer
 @dataclass
 class DataIngestionConfig:
     train_data_path: str = os.path.join("artifacts", "train.csv")
@@ -27,7 +27,7 @@ class DataIngestion:
         logger.info('Entered in my data ingestion method or component.')
         
         try:
-            df = pd.read_csv("notebook/Data/heart.csv")
+            df = pd.read_csv("notebook/Data/cleaned_data.csv")
             logger.info("Read the data set as Data Frame.")
 
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
@@ -52,10 +52,4 @@ class DataIngestion:
 
         except Exception as e:
             logger.info("Error occurred during Data ingestion process.")
-            raise Custom_Exception(e,sys)
-        
-
-if __name__ == "__main__":
-    # For the function testing
-    obj = DataIngestion()
-    train_data, test_data = obj.initiate_data_ingestion()
+            raise Custom_Exception(e,sys)        

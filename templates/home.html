@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heart Disease Prediction</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f7ff;
+      color: #333;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      width: 500px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    select, input {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background: #007BFF;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    .result {
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #006400;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>❤️ Heart Disease Prediction</h1>
+
+    <form action="{{ url_for('predict_datapoint') }}" method="post">
+
+      <label>Age</label>
+      <input type="number" name="Age" placeholder="Enter age" required min="1" max="120">
+
+      <label>Resting Blood Pressure</label>
+      <input type="number" name="RestingBP" placeholder="Enter BP (mm Hg)" required>
+
+      <label>Cholesterol</label>
+      <input type="number" name="Cholesterol" placeholder="Enter Cholesterol level" required>
+
+      <label>Fasting Blood Sugar (FastingBS)</label>
+      <select name="FastingBS" required>
+        <option value="0">Below 120 mg/dl</option>
+        <option value="1">Above 120 mg/dl</option>
+      </select>
+
+      <label>Max Heart Rate (MaxHR)</label>
+      <input type="number" name="MaxHR" placeholder="Enter Max Heart Rate" required>
+
+      <label>Oldpeak (ST depression)</label>
+      <input type="number" step="0.1" name="Oldpeak" placeholder="Enter ST depression" required>
+
+      <label>Sex</label>
+      <select name="sex_option" required>
+        <option selected disabled value="">Select Sex</option>
+        <option value="M">Male</option>
+        <option value="F">Female</option>
+      </select>
+
+      <label>Chest Pain Type</label>
+      <select name="chestpain_option" required>
+        <option selected disabled value="">Select Chest Pain Type</option>
+        <option value="ASY">Asymptomatic</option>
+        <option value="ATA">Atypical Angina</option>
+        <option value="NAP">Non-Anginal Pain</option>
+        <option value="TA">Typical Angina</option>
+      </select>
+
+      <label>Resting ECG Result</label>
+      <select name="restingecg_option" required>
+        <option selected disabled value="">Select ECG Type</option>
+        <option value="Normal">Normal</option>
+        <option value="LVH">Left Ventricular Hypertrophy</option>
+        <option value="ST">ST-T Wave Abnormality</option>
+      </select>
+
+      <label>Exercise Induced Angina</label>
+      <select name="exerciseangina_option" required>
+        <option selected disabled value="">Select Option</option>
+        <option value="Y">Yes</option>
+        <option value="N">No</option>
+      </select>
+
+      <label>ST Slope</label>
+      <select name="stslope_option" required>
+        <option selected disabled value="">Select ST Slope</option>
+        <option value="Up">Upsloping</option>
+        <option value="Flat">Flat</option>
+        <option value="Down">Downsloping</option>
+      </select>
+
+      <button class="btn" type="submit">🔍 Predict Heart Disease</button>
+    </form>
+
+    {% if results %}
+      <div class="result">
+        <h2>Prediction Result:</h2>
+        <p>{{ results }}</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    // Automatically convert dropdown selections to one-hot style before sending form
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const form = e.target;
+
+      // Sex one-hot
+      const sex = form.sex_option.value;
+      form.insertAdjacentHTML('beforeend', `<input type="hidden" name="Sex_M" value="${sex === 'M' ? 1 : 0}">`);
+      form.insertAdjacentHTML('beforeend', `<input type="hidden" name="Sex_F" value="${sex === 'F' ? 1 : 0}">`);
+
+      // ChestPainType one-hot
+      const chest = form.chestpain_option.value;
+      ['ASY', 'ATA', 'NAP', 'TA'].forEach(type => {
+        form.insertAdjacentHTML('beforeend', `<input type="hidden" name="ChestPainType_${type}" value="${chest === type ? 1 : 0}">`);
+      });
+
+      // RestingECG one-hot
+      const ecg = form.restingecg_option.value;
+      ['LVH', 'Normal', 'ST'].forEach(type => {
+        form.insertAdjacentHTML('beforeend', `<input type="hidden" name="RestingECG_${type}" value="${ecg === type ? 1 : 0}">`);
+      });
+
+      // ExerciseAngina one-hot
+      const angina = form.exerciseangina_option.value;
+      ['Y', 'N'].forEach(type => {
+        form.insertAdjacentHTML('beforeend', `<input type="hidden" name="ExerciseAngina_${type}" value="${angina === type ? 1 : 0}">`);
+      });
+
+      // ST_Slope one-hot
+      const slope = form.stslope_option.value;
+      ['Up', 'Flat', 'Down'].forEach(type => {
+        form.insertAdjacentHTML('beforeend', `<input type="hidden" name="ST_Slope_${type}" value="${slope === type ? 1 : 0}">`);
+      });
+    });
+  </script>
+</body>
+</html>
