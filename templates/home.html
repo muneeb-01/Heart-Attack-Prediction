@@ -3,167 +3,598 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Heart Disease Prediction</title>
+  <title>CardioAI | Heart Disease Risk Assessment</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
+    :root {
+      --primary: #FF4B6E;
+      --primary-hover: #E03556;
+      --secondary: #0A2540;
+      --accent: #00D4B2;
+      --bg-gradient: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);
+      --card-bg: #ffffff;
+      --text-dark: #1E293B;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.02);
+      --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+      --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+      
+      --danger-bg: #FFF5F5;
+      --danger-border: #FEB2B2;
+      --danger-text: #C53030;
+      
+      --success-bg: #F0FDF4;
+      --success-border: #BBF7D0;
+      --success-text: #166534;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f2f7ff;
-      color: #333;
-      padding: 30px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-dark);
+      min-height: 100vh;
+      line-height: 1.6;
       display: flex;
       flex-direction: column;
+    }
+
+    /* Navbar */
+    header {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
     }
-    .container {
-      background: white;
-      padding: 30px 40px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      width: 500px;
+
+    .logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
     }
-    h1, h2 {
+
+    .logo i {
+      color: var(--primary);
+      animation: beat 1.2s infinite ease-in-out;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.15); }
+      40% { transform: scale(1.05); }
+      60% { transform: scale(1.2); }
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 15px;
+      transition: color 0.2s ease;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+    .btn-dashboard-nav {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 99px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-dashboard-nav:hover {
+      background: rgba(10, 37, 64, 0.05);
+      color: var(--secondary);
+      border-color: var(--secondary);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      width: 100%;
+    }
+
+    .form-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .form-header {
       text-align: center;
+      margin-bottom: 32px;
     }
-    select, input {
-      width: 100%;
-      padding: 8px;
-      margin: 6px 0 16px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+
+    .form-header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 8px;
     }
-    .btn {
-      width: 100%;
-      padding: 10px;
-      background: #007BFF;
-      border: none;
-      color: white;
-      border-radius: 5px;
+
+    .form-header p {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    /* Error Panel */
+    .error-panel {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      color: var(--danger-text);
+      margin-bottom: 32px;
+    }
+
+    .error-panel h3 {
       font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .error-panel ul {
+      list-style-position: inside;
+      font-size: 14px;
+    }
+
+    /* Form Layout Grid */
+    .grid-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .grid-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-group label span.unit {
+      font-weight: 400;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text-dark);
+      background: #F8FAFC;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(255, 75, 110, 0.15);
+    }
+
+    /* Form Button */
+    .btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(255, 75, 110, 0.25);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
     }
-    .btn:hover {
-      background: #0056b3;
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(255, 75, 110, 0.4);
     }
-    .result {
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit i {
+      transition: transform 0.3s ease;
+    }
+
+    .btn-submit:hover i {
+      transform: scale(1.15);
+    }
+
+    /* Results Dashboard Card */
+    .result-card {
+      margin-top: 40px;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.5s ease-out;
+      border: 1px solid transparent;
       text-align: center;
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #006400;
-      margin-top: 20px;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card.risk-high {
+      background: var(--danger-bg);
+      border-color: var(--danger-border);
+      color: var(--danger-text);
+    }
+
+    .result-card.risk-low {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+      color: var(--success-text);
+    }
+
+    .result-icon-wrapper {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 20px;
+    }
+
+    .risk-high .result-icon-wrapper {
+      background: rgba(197, 48, 48, 0.1);
+      color: var(--danger-text);
+      animation: pulseAlert 1.5s infinite;
+    }
+
+    @keyframes pulseAlert {
+      0% { box-shadow: 0 0 0 0 rgba(197, 48, 48, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(197, 48, 48, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(197, 48, 48, 0); }
+    }
+
+    .risk-low .result-icon-wrapper {
+      background: rgba(22, 101, 52, 0.1);
+      color: var(--success-text);
+    }
+
+    .result-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .result-prob-container {
+      margin-top: 16px;
+      max-width: 350px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .result-prob-bar {
+      height: 8px;
+      background: #E2E8F0;
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .result-prob-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 1s cubic-bezier(0.1, 0.8, 0.3, 1);
+    }
+
+    .risk-high .result-prob-fill {
+      background: var(--primary);
+    }
+
+    .risk-low .result-prob-fill {
+      background: var(--accent);
+    }
+
+    .result-prob-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-top: 8px;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--secondary);
+      color: rgba(255,255,255,0.7);
+      padding: 32px 24px;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 14px;
+      margin-top: auto;
+    }
+
+    footer p a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer p a:hover {
+      color: var(--primary);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>❤️ Heart Disease Prediction</h1>
 
-    <form action="{{ url_for('predict_datapoint') }}" method="post">
+  <!-- Header Section -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <i class="fa-solid fa-heart-pulse"></i> CardioAI
+      </a>
+      <nav>
+        <a href="/" class="btn-dashboard-nav">Back to Dashboard</a>
+      </nav>
+    </div>
+  </header>
 
-      <label>Age</label>
-      <input type="number" name="Age" placeholder="Enter age" required min="1" max="120">
-
-      <label>Resting Blood Pressure</label>
-      <input type="number" name="RestingBP" placeholder="Enter BP (mm Hg)" required>
-
-      <label>Cholesterol</label>
-      <input type="number" name="Cholesterol" placeholder="Enter Cholesterol level" required>
-
-      <label>Fasting Blood Sugar (FastingBS)</label>
-      <select name="FastingBS" required>
-        <option value="0">Below 120 mg/dl</option>
-        <option value="1">Above 120 mg/dl</option>
-      </select>
-
-      <label>Max Heart Rate (MaxHR)</label>
-      <input type="number" name="MaxHR" placeholder="Enter Max Heart Rate" required>
-
-      <label>Oldpeak (ST depression)</label>
-      <input type="number" step="0.1" name="Oldpeak" placeholder="Enter ST depression" required>
-
-      <label>Sex</label>
-      <select name="sex_option" required>
-        <option selected disabled value="">Select Sex</option>
-        <option value="M">Male</option>
-        <option value="F">Female</option>
-      </select>
-
-      <label>Chest Pain Type</label>
-      <select name="chestpain_option" required>
-        <option selected disabled value="">Select Chest Pain Type</option>
-        <option value="ASY">Asymptomatic</option>
-        <option value="ATA">Atypical Angina</option>
-        <option value="NAP">Non-Anginal Pain</option>
-        <option value="TA">Typical Angina</option>
-      </select>
-
-      <label>Resting ECG Result</label>
-      <select name="restingecg_option" required>
-        <option selected disabled value="">Select ECG Type</option>
-        <option value="Normal">Normal</option>
-        <option value="LVH">Left Ventricular Hypertrophy</option>
-        <option value="ST">ST-T Wave Abnormality</option>
-      </select>
-
-      <label>Exercise Induced Angina</label>
-      <select name="exerciseangina_option" required>
-        <option selected disabled value="">Select Option</option>
-        <option value="Y">Yes</option>
-        <option value="N">No</option>
-      </select>
-
-      <label>ST Slope</label>
-      <select name="stslope_option" required>
-        <option selected disabled value="">Select ST Slope</option>
-        <option value="Up">Upsloping</option>
-        <option value="Flat">Flat</option>
-        <option value="Down">Downsloping</option>
-      </select>
-
-      <button class="btn" type="submit">🔍 Predict Heart Disease</button>
-    </form>
-
-    {% if results %}
-      <div class="result">
-        <h2>Prediction Result:</h2>
-        <p>{{ results }}</p>
+  <!-- Main Content -->
+  <main>
+    
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Patient Risk Assessment</h1>
+        <p>Complete all physiological variables below to compute the cardiovascular risk probability.</p>
       </div>
-    {% endif %}
-  </div>
 
+      <!-- Errors Panel -->
+      {% if errors %}
+        <div class="error-panel">
+          <h3><i class="fa-solid fa-triangle-exclamation"></i> Input Validation Failed</h3>
+          <ul>
+            {% for error in errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <!-- Form Section -->
+      <form action="{{ url_for('predict_datapoint') }}" method="post" id="predictionForm">
+        
+        <!-- Row 1: Age & Sex -->
+        <div class="grid-row">
+          <div class="form-group">
+            <label for="Age">Age <span class="unit">years</span></label>
+            <input type="number" id="Age" name="Age" placeholder="e.g. 45" required min="1" max="120" value="{{ form_data.Age if form_data else '' }}">
+          </div>
+          <div class="form-group">
+            <label for="sex_option">Sex</label>
+            <select id="sex_option" name="sex_option" required>
+              <option value="" disabled {% if not form_data or not form_data.sex_option %}selected{% endif %}>Select biological sex</option>
+              <option value="M" {% if form_data and form_data.sex_option == 'M' %}selected{% endif %}>Male</option>
+              <option value="F" {% if form_data and form_data.sex_option == 'F' %}selected{% endif %}>Female</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: BP & Cholesterol -->
+        <div class="grid-row">
+          <div class="form-group">
+            <label for="RestingBP">Resting Blood Pressure <span class="unit">mm Hg</span></label>
+            <input type="number" id="RestingBP" name="RestingBP" placeholder="e.g. 120" required min="50" max="250" value="{{ form_data.RestingBP if form_data else '' }}">
+          </div>
+          <div class="form-group">
+            <label for="Cholesterol">Serum Cholesterol <span class="unit">mg/dl</span></label>
+            <input type="number" id="Cholesterol" name="Cholesterol" placeholder="e.g. 210 (0 if unknown)" required min="0" max="600" value="{{ form_data.Cholesterol if form_data else '' }}">
+          </div>
+        </div>
+
+        <!-- Row 3: FastingBS & MaxHR -->
+        <div class="grid-row">
+          <div class="form-group">
+            <label for="FastingBS">Fasting Blood Sugar</label>
+            <select id="FastingBS" name="FastingBS" required>
+              <option value="" disabled {% if not form_data or not form_data.FastingBS %}selected{% endif %}>Select fasting level</option>
+              <option value="0" {% if form_data and form_data.FastingBS == '0' %}selected{% endif %}>Below 120 mg/dl</option>
+              <option value="1" {% if form_data and form_data.FastingBS == '1' %}selected{% endif %}>Above 120 mg/dl</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="MaxHR">Max Heart Rate <span class="unit">bpm</span></label>
+            <input type="number" id="MaxHR" name="MaxHR" placeholder="e.g. 150" required min="60" max="220" value="{{ form_data.MaxHR if form_data else '' }}">
+          </div>
+        </div>
+
+        <!-- Row 4: Chest Pain & Resting ECG -->
+        <div class="grid-row">
+          <div class="form-group">
+            <label for="chestpain_option">Chest Pain Type</label>
+            <select id="chestpain_option" name="chestpain_option" required>
+              <option value="" disabled {% if not form_data or not form_data.chestpain_option %}selected{% endif %}>Select symptoms</option>
+              <option value="ASY" {% if form_data and form_data.chestpain_option == 'ASY' %}selected{% endif %}>Asymptomatic</option>
+              <option value="ATA" {% if form_data and form_data.chestpain_option == 'ATA' %}selected{% endif %}>Atypical Angina</option>
+              <option value="NAP" {% if form_data and form_data.chestpain_option == 'NAP' %}selected{% endif %}>Non-Anginal Pain</option>
+              <option value="TA" {% if form_data and form_data.chestpain_option == 'TA' %}selected{% endif %}>Typical Angina</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="restingecg_option">Resting ECG Result</label>
+            <select id="restingecg_option" name="restingecg_option" required>
+              <option value="" disabled {% if not form_data or not form_data.restingecg_option %}selected{% endif %}>Select resting ECG profile</option>
+              <option value="Normal" {% if form_data and form_data.restingecg_option == 'Normal' %}selected{% endif %}>Normal</option>
+              <option value="LVH" {% if form_data and form_data.restingecg_option == 'LVH' %}selected{% endif %}>Left Ventricular Hypertrophy (LVH)</option>
+              <option value="ST" {% if form_data and form_data.restingecg_option == 'ST' %}selected{% endif %}>ST-T Wave Abnormality</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 5: Exercise Angina & ST Slope -->
+        <div class="grid-row">
+          <div class="form-group">
+            <label for="exerciseangina_option">Exercise Induced Angina</label>
+            <select id="exerciseangina_option" name="exerciseangina_option" required>
+              <option value="" disabled {% if not form_data or not form_data.exerciseangina_option %}selected{% endif %}>Select exercise distress</option>
+              <option value="Y" {% if form_data and form_data.exerciseangina_option == 'Y' %}selected{% endif %}>Yes</option>
+              <option value="N" {% if form_data and form_data.exerciseangina_option == 'N' %}selected{% endif %}>No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="stslope_option">ST Slope Type</label>
+            <select id="stslope_option" name="stslope_option" required>
+              <option value="" disabled {% if not form_data or not form_data.stslope_option %}selected{% endif %}>Select ST slope pattern</option>
+              <option value="Up" {% if form_data and form_data.stslope_option == 'Up' %}selected{% endif %}>Upsloping</option>
+              <option value="Flat" {% if form_data and form_data.stslope_option == 'Flat' %}selected{% endif %}>Flat</option>
+              <option value="Down" {% if form_data and form_data.stslope_option == 'Down' %}selected{% endif %}>Downsloping</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 6: Oldpeak -->
+        <div class="grid-row">
+          <div class="form-group">
+            <label for="Oldpeak">Oldpeak <span class="unit">ST depression (mm)</span></label>
+            <input type="number" step="0.1" id="Oldpeak" name="Oldpeak" placeholder="e.g. 1.5" required min="-2.0" max="10.0" value="{{ form_data.Oldpeak if form_data else '' }}">
+          </div>
+          <div class="form-group" style="justify-content: flex-end;">
+            <!-- Spacer to align with two-column layout on wide screens -->
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button class="btn-submit" type="submit" id="submitBtn">
+          <i class="fa-solid fa-heart-circle-check"></i> Evaluate Patient Profile
+        </button>
+      </form>
+
+      <!-- Prediction Results Display -->
+      {% if results %}
+        <div class="result-card {% if is_high_risk %}risk-high{% else %}risk-low{% endif %}" id="resultCard">
+          <div class="result-icon-wrapper">
+            {% if is_high_risk %}
+              <i class="fa-solid fa-heart-circle-exclamation"></i>
+            {% else %}
+              <i class="fa-solid fa-heart-circle-check"></i>
+            {% endif %}
+          </div>
+          <div class="result-title">{{ results }}</div>
+          
+          {% if probability is not null %}
+            <div class="result-prob-container">
+              <div style="font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Ischemic Risk Probability</div>
+              <div class="result-prob-bar">
+                <div class="result-prob-fill" style="width: {{ probability }}%;"></div>
+              </div>
+              <div class="result-prob-text">{{ probability }}% Risk Probability</div>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+  </main>
+
+  <!-- Script for form submission effect -->
   <script>
-    // Automatically convert dropdown selections to one-hot style before sending form
-    document.querySelector('form').addEventListener('submit', function(e) {
-      const form = e.target;
-
-      // Sex one-hot
-      const sex = form.sex_option.value;
-      form.insertAdjacentHTML('beforeend', `<input type="hidden" name="Sex_M" value="${sex === 'M' ? 1 : 0}">`);
-      form.insertAdjacentHTML('beforeend', `<input type="hidden" name="Sex_F" value="${sex === 'F' ? 1 : 0}">`);
-
-      // ChestPainType one-hot
-      const chest = form.chestpain_option.value;
-      ['ASY', 'ATA', 'NAP', 'TA'].forEach(type => {
-        form.insertAdjacentHTML('beforeend', `<input type="hidden" name="ChestPainType_${type}" value="${chest === type ? 1 : 0}">`);
-      });
-
-      // RestingECG one-hot
-      const ecg = form.restingecg_option.value;
-      ['LVH', 'Normal', 'ST'].forEach(type => {
-        form.insertAdjacentHTML('beforeend', `<input type="hidden" name="RestingECG_${type}" value="${ecg === type ? 1 : 0}">`);
-      });
-
-      // ExerciseAngina one-hot
-      const angina = form.exerciseangina_option.value;
-      ['Y', 'N'].forEach(type => {
-        form.insertAdjacentHTML('beforeend', `<input type="hidden" name="ExerciseAngina_${type}" value="${angina === type ? 1 : 0}">`);
-      });
-
-      // ST_Slope one-hot
-      const slope = form.stslope_option.value;
-      ['Up', 'Flat', 'Down'].forEach(type => {
-        form.insertAdjacentHTML('beforeend', `<input type="hidden" name="ST_Slope_${type}" value="${slope === type ? 1 : 0}">`);
-      });
+    const form = document.getElementById('predictionForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    form.addEventListener('submit', function() {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Clinical Model...';
     });
+
+    // Auto-scroll to results if present
+    const resultCard = document.getElementById('resultCard');
+    if (resultCard) {
+      resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   </script>
+
+  <!-- Footer Section -->
+  <footer>
+    <p>&copy; 2026 CardioAI Platform. Built by <a href="mailto:muneerahmed8556@gmail.com">Muneeb Mughal</a>. For academic & validation purposes only.</p>
+  </footer>
+
 </body>
 </html>
